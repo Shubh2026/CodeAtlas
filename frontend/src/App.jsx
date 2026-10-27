@@ -28,31 +28,70 @@ function App() {
       .then((data) => {
         const fileNodes = data.nodes
           .filter((node) => node.type === "file")
-          .map((node, index) => ({
+          .map((node) => {
+            const children = data.nodes.filter(
+              (n) =>
+                (n.type === "function" || n.type === "class") &&
+                n.path === node.path
+            );
+
+            const functions = children.filter(
+              (n) => n.type === "function"
+            ).length;
+
+            const classes = children.filter(
+              (n) => n.type === "class"
+            ).length;
+
+            return {
+              id: node.id,
+              type: "file",
+              position: { x: 0, y: 0 },
+              data: {
+                label: node.label,
+                path: node.path,
+                functions,
+                classes,
+              },
+            };
+          });
+
+        const classAndFunctionNodes = data.nodes
+          .filter(
+            (node) =>
+              node.type === "class" ||
+              node.type === "function"
+          )
+          .map((node) => ({
             id: node.id,
-
-            position: {
-              x: (index % 3) * 320,
-              y: Math.floor(index / 3) * 220,
-            },
-
+            type: node.type,
+            position: { x: 0, y: 0 },
             data: {
               label: node.label,
               path: node.path,
-            },
-
-            style: {
-              background: "#111827",
-              color: "#f9fafb",
-              border: "1px solid #374151",
-              borderRadius: "10px",
-              padding: "14px 18px",
-              width: 180,
-              fontSize: 13,
+              line: node.line,
             },
           }));
 
-        const flowEdges = data.edges.map((edge) => ({
+        const graphNodes = [
+          ...fileNodes,
+          ...classAndFunctionNodes,
+        ];
+
+        const hierarchyEdges = data.nodes
+          .filter(
+            (node) =>
+              node.type === "class" ||
+              node.type === "function"
+          )
+          .map((node) => ({
+            id: `${node.parent ?? node.path}->${node.id}`,
+            source: node.parent ?? node.path,
+            target: node.id,
+            type: "smoothstep",
+          }));
+
+        const importEdges = data.edges.map((edge) => ({
           id: edge.id,
           source: edge.source,
           target: edge.target,
@@ -60,7 +99,12 @@ function App() {
           animated: true,
         }));
 
-        setNodes(fileNodes);
+        const flowEdges = [
+          ...hierarchyEdges,
+          ...importEdges,
+        ];
+
+        setNodes(graphNodes);
         setEdges(flowEdges);
 
         setStats({

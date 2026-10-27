@@ -577,3 +577,186 @@ button {
 .react-flow__edge-textbg {
   fill: #111722;
 }
+
+.file-node {
+  width: 210px;
+
+  padding: 14px;
+
+  background: #111722;
+
+  border: 1px solid #2d394d;
+  border-radius: 10px;
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.25);
+
+  transition:
+    border-color 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.file-node:hover {
+  border-color: #668bd0;
+
+  box-shadow:
+    0 10px 35px rgba(50, 90, 160, 0.2);
+
+  transform: translateY(-2px);
+}
+
+.file-node-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.file-icon {
+  width: 28px;
+  height: 28px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 7px;
+
+  background: #172238;
+
+  color: #82aaff;
+
+  font-size: 15px;
+}
+
+.file-name {
+  color: #edf1f7;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-node-type {
+  margin-top: 11px;
+
+  color: #70809a;
+
+  font-size: 10px;
+}
+
+.file-node-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-top: 7px;
+
+  color: #8d98aa;
+
+  font-size: 10px;
+}
+
+.file-node-meta span {
+  color: #48546a;
+}
+
+.file-node .react-flow__handle {
+  width: 7px;
+  height: 7px;
+
+  background: #7597d8;
+
+  border: 2px solid #111722;
+}
+
+/* Class Node */
+
+.class-node {
+  width: 170px;
+  padding: 12px 14px;
+  background: #17132b;
+  border: 1px solid #6d5dfc;
+  border-radius: 10px;
+  color: #f9fafb;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.class-node-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.class-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #6d5dfc;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.class-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.class-node-type {
+  margin-top: 7px;
+  font-size: 10px;
+  color: #a78bfa;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+
+/* Function Node */
+
+.function-node {
+  width: 170px;
+  padding: 12px 14px;
+  background: #10231d;
+  border: 1px solid #34d399;
+  border-radius: 10px;
+  color: #f9fafb;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.function-node-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.function-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #10b981;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.function-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.function-node-type {
+  margin-top: 7px;
+  font-size: 10px;
+  color: #6ee7b7;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}

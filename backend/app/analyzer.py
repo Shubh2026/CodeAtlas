@@ -10,10 +10,12 @@ def analyze_project(project_path: Path):
     nodes = []
     edges = []
 
-    # Map module/file names to node IDs
     module_map = {}
 
-    # First pass: discover Python files
+    # --------------------------------
+    # Discover Python files
+    # --------------------------------
+
     for file_path in project_path.rglob("*"):
         if not file_path.is_file():
             continue
@@ -40,7 +42,10 @@ def analyze_project(project_path: Path):
             "path": file_id,
         })
 
-    # Second pass: analyze files
+    # --------------------------------
+    # Analyze Python files
+    # --------------------------------
+
     for file_path in project_path.rglob("*"):
         if not file_path.is_file():
             continue
@@ -62,35 +67,79 @@ def analyze_project(project_path: Path):
         except Exception:
             continue
 
-        # Functions and classes
-        for item in ast.walk(tree):
+        # --------------------------------
+        # Classes and functions
+        # --------------------------------
 
-            if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                nodes.append({
-                    "id": f"{file_id}:{item.lineno}:{item.name}",
-                    "type": "function",
-                    "label": item.name,
-                    "path": file_id,
-                    "line": item.lineno,
-                })
+        for item in tree.body:
 
-            elif isinstance(item, ast.ClassDef):
+            # ----------------------------
+            # Class
+            # ----------------------------
+
+            if isinstance(item, ast.ClassDef):
+
+                class_id = f"{file_id}:{item.lineno}:{item.name}"
+
                 nodes.append({
-                    "id": f"{file_id}:{item.lineno}:{item.name}",
+                    "id": class_id,
                     "type": "class",
                     "label": item.name,
                     "path": file_id,
                     "line": item.lineno,
                 })
 
-        # Imports
+                # Methods inside the class
+                for child in item.body:
+
+                    if isinstance(
+                        child,
+                        (ast.FunctionDef, ast.AsyncFunctionDef)
+                    ):
+                        function_id = (
+                            f"{file_id}:{child.lineno}:{child.name}"
+                        )
+
+                        nodes.append({
+                            "id": function_id,
+                            "type": "function",
+                            "label": child.name,
+                            "path": file_id,
+                            "line": child.lineno,
+                            "parent": class_id,
+                        })
+
+            # ----------------------------
+            # Standalone function
+            # ----------------------------
+
+            elif isinstance(
+                item,
+                (ast.FunctionDef, ast.AsyncFunctionDef)
+            ):
+
+                function_id = (
+                    f"{file_id}:{item.lineno}:{item.name}"
+                )
+
+                nodes.append({
+                    "id": function_id,
+                    "type": "function",
+                    "label": item.name,
+                    "path": file_id,
+                    "line": item.lineno,
+                })
+
+        # --------------------------------
+        # Import relationships
+        # --------------------------------
+
         for item in ast.walk(tree):
 
-            # import utils
-            # import utils.helpers
             if isinstance(item, ast.Import):
 
                 for alias in item.names:
+
                     imported_module = alias.name
 
                     target_file = resolve_module(
@@ -99,6 +148,7 @@ def analyze_project(project_path: Path):
                     )
 
                     if target_file and target_file != file_id:
+
                         edges.append({
                             "id": f"{file_id}->{target_file}",
                             "source": file_id,
@@ -106,10 +156,10 @@ def analyze_project(project_path: Path):
                             "type": "import",
                         })
 
-            # from utils import something
             elif isinstance(item, ast.ImportFrom):
 
                 if item.module:
+
                     imported_module = item.module
 
                     target_file = resolve_module(
@@ -118,6 +168,7 @@ def analyze_project(project_path: Path):
                     )
 
                     if target_file and target_file != file_id:
+
                         edges.append({
                             "id": f"{file_id}->{target_file}",
                             "source": file_id,
@@ -125,7 +176,10 @@ def analyze_project(project_path: Path):
                             "type": "import",
                         })
 
+    # --------------------------------
     # Remove duplicate edges
+    # --------------------------------
+
     unique_edges = {}
 
     for edge in edges:
@@ -144,22 +198,17 @@ def resolve_module(module_name: str, module_map: dict):
     """
     Resolve an imported Python module to a discovered file.
 
-    Handles projects where the ZIP contains an extra
-    root directory such as:
-
-        codeatlas-sample-repo/
-            main.py
-            models/user.py
+    Handles projects where the ZIP contains
+    an extra root directory.
     """
 
-    # Direct match
     if module_name in module_map:
         return module_map[module_name]
 
-    # Try parent modules
     parts = module_name.split(".")
 
     while parts:
+
         candidate = ".".join(parts)
 
         if candidate in module_map:
@@ -167,15 +216,6 @@ def resolve_module(module_name: str, module_map: dict):
 
         parts.pop()
 
-    # Handle an extra ZIP/project root folder.
-    #
-    # Example:
-    # import: models.user
-    #
-    # module map:
-    # codeatlas-sample-repo.models.user
-    #
-    # Find a module whose name ends with ".models.user"
     suffix = "." + module_name
 
     matches = [
@@ -187,10 +227,10 @@ def resolve_module(module_name: str, module_map: dict):
     if matches:
         return matches[0]
 
-    # Also try parent modules with the project root.
     parts = module_name.split(".")
 
     while parts:
+
         candidate = ".".join(parts)
         suffix = "." + candidate
 
