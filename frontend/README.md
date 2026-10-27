@@ -1,16 +1,113 @@
-# React + Vite
+# 🗺️ CodeAtlas
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> **Navigate the architecture behind your code.**
 
-Currently, two official plugins are available:
+CodeAtlas is an AI-powered codebase exploration and visualization platform designed to help developers understand complex, unfamiliar, and legacy software systems.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+It analyzes a codebase, maps relationships between files and components, and uses AI to turn complex software architecture into understandable insights.
 
-## React Compiler
+## ✨ What is CodeAtlas?
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+As software projects grow, understanding how everything fits together becomes increasingly difficult. Documentation can become outdated, dependencies become complex, and valuable architectural knowledge can be lost.
 
-## Expanding the Oxlint configuration
+**CodeAtlas acts as a map for your codebase.**
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Upload a project and explore:
+
+* 🕸️ **Dependency Graphs** — Visualize relationships between files and components.
+* 🤖 **AI-Powered Insights** — Ask questions and get explanations about your codebase.
+* 🧭 **Architecture Exploration** — Understand how different parts of a system interact.
+* ⚠️ **Risk & Complexity Analysis** — Identify important dependencies and potentially problematic areas.
+* 📖 **Codebase Summaries** — Get a high-level understanding of unfamiliar projects.
+
+## 🏗️ How It Works
+
+```text
+        ┌─────────────────┐
+        │   Upload Code   │
+        └────────┬────────┘
+                 │
+                 ▼
+        ┌─────────────────┐
+        │  Code Analysis  │
+        └────────┬────────┘
+                 │
+        ┌────────┴─────────┐
+        ▼                  ▼
+┌───────────────┐   ┌───────────────┐
+│ Dependency    │   │ AI Analysis   │
+│ Analysis      │   │ Groq + Llama  │
+└───────┬───────┘   └───────┬───────┘
+        │                   │
+        ▼                   ▼
+┌───────────────┐   ┌───────────────┐
+│ Architecture  │   │ AI Insights   │
+│ Graph         │   │ & Explanations│
+└───────┬───────┘   └───────┬───────┘
+        │                   │
+        └─────────┬─────────┘
+                  ▼
+          ┌──────────────┐
+          │  CodeAtlas   │
+          │   Dashboard  │
+          └──────────────┘
+```
+
+## 🚀 Planned Features
+
+* [ ] Project/ZIP upload
+* [ ] Automated codebase analysis
+* [ ] File and module dependency detection
+* [ ] Interactive architecture visualization
+* [ ] AI-generated codebase summaries
+* [ ] AI architecture explanations
+* [ ] Ask CodeAtlas — natural-language codebase Q&A
+* [ ] Technical debt and risk insights
+* [ ] Important dependency identification
+* [ ] Search and filtering
+* [ ] Interactive graph exploration
+
+## 🧰 Tech Stack
+
+### Frontend
+
+* React
+* Vite
+* Tailwind CSS
+* React Flow / D3.js
+
+### Backend
+
+* Python
+* FastAPI
+* NetworkX
+* AST-based code analysis
+
+### AI
+
+* Groq API
+* Llama
+
+## 🎯 Vision
+
+CodeAtlas aims to make software architecture **visible, understandable, and accessible**.
+
+Instead of spending hours tracing dependencies or reading unfamiliar code, developers should be able to explore their systems visually and ask questions in natural language.
+
+> **Your codebase is a world. CodeAtlas gives you the map.**
+
+## 📌 Project Status
+
+🚧 **Currently in development**
+
+CodeAtlas is being developed as an experimental AI-powered software architecture exploration platform.
+
+## 🤝 Contributing
+
+Contributions, ideas, and feedback are welcome.
+
+If you find a bug or have an idea for a feature, feel free to open an issue or submit a pull request.
+
+## 📄 License
+
+License information will be added as the project develops.
