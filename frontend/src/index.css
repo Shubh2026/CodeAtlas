@@ -760,3 +760,149 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+/* =========================================
+   FINAL CODEATLAS UI POLISH
+========================================= */
+
+/* Upload button */
+.upload-button {
+  background: #111827 !important;
+  color: #e5e7eb !important;
+  border: 1px solid #334155 !important;
+  padding: 8px 14px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+
+.upload-button:hover {
+  background: #1e293b !important;
+  border-color: #6366f1 !important;
+  color: #ffffff !important;
+}
+
+/* AI panel */
+.ai-panel {
+  position: fixed !important;
+
+  top: 76px !important;
+  right: 18px !important;
+  bottom: 18px !important;
+
+  left: auto !important;
+
+  width: 470px !important;
+  height: auto !important;
+  max-height: none !important;
+
+  z-index: 1000 !important;
+
+  background: rgba(12, 17, 28, 0.97) !important;
+
+  border: 1px solid rgba(129, 108, 255, 0.35) !important;
+  border-radius: 14px !important;
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.65),
+    0 0 35px rgba(99, 102, 241, 0.08) !important;
+
+  backdrop-filter: blur(20px);
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  overflow: hidden !important;
+}
+
+/* AI header */
+.ai-panel-header {
+  flex-shrink: 0;
+
+  padding: 18px 20px !important;
+
+  background: rgba(17, 24, 39, 0.85);
+
+  border-bottom: 1px solid #1f2937 !important;
+}
+
+.ai-panel-label {
+  color: #8b7cf6 !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+}
+
+.ai-panel-header h2 {
+  margin: 5px 0 0 !important;
+
+  font-size: 18px !important;
+  font-weight: 700 !important;
+
+  color: #f8fafc !important;
+}
+
+/* Close button */
+.ai-panel-header button {
+  width: 30px !important;
+  height: 30px !important;
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 7px !important;
+
+  color: #94a3b8 !important;
+  font-size: 18px !important;
+
+  cursor: pointer;
+}
+
+.ai-panel-header button:hover {
+  background: #334155 !important;
+  color: white !important;
+}
+
+/* AI content */
+.ai-panel-content {
+  flex: 1 !important;
+
+  padding: 22px !important;
+
+  overflow-y: auto !important;
+
+  max-height: none !important;
+}
+
+/* AI text */
+.ai-panel-content pre {
+  margin: 0 !important;
+
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    sans-serif !important;
+
+  font-size: 13px !important;
+  line-height: 1.7 !important;
+
+  color: #cbd5e1 !important;
+}
+
+/* AI scrollbar */
+.ai-panel-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.ai-panel-content::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}

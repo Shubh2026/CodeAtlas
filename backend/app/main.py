@@ -4,6 +4,7 @@ from pathlib import Path
 import zipfile
 import shutil
 from app.analyzer import analyze_project
+from app.ai_analyzer import analyze_codebase
 
 app = FastAPI(title="CodeAtlas API")
 
@@ -78,3 +79,23 @@ def analyze_uploaded_project(project_name: str):
         )
 
     return analyze_project(project_path)
+
+@app.get("/api/projects/{project_name}/ai")
+def ai_analysis(project_name: str):
+
+    project_path = PROJECTS_DIR / project_name
+
+    if not project_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found."
+        )
+
+    analysis = analyze_project(project_path)
+
+    result = analyze_codebase(analysis)
+
+    return {
+        "project": project_name,
+        "analysis": result,
+    }

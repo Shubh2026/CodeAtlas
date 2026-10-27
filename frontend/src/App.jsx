@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
@@ -11,6 +11,32 @@ function App() {
   const [edges, setEdges] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
 
+  const [aiAnalysis, setAiAnalysis] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+
+  const handleAIInsights = async () => {
+    setAiLoading(true);
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/projects/${projectName}/ai`
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.detail || "AI analysis failed");
+      }
+
+      setAiAnalysis(result.analysis);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   const [stats, setStats] = useState({
     files: 0,
     classes: 0,
@@ -18,7 +44,60 @@ function App() {
     dependencies: 0,
   });
 
-  const projectName = "codeatlas-sample-repo";
+  const [projectName, setProjectName] = useState(
+    "codeatlas-sample-repo"
+  );
+
+  const [uploading, setUploading] = useState(false);
+
+  const fileInputRef = useRef(null);
+
+  const handleUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    if (!file.name.endsWith(".zip")) {
+      alert("Please upload a ZIP file.");
+      return;
+    }
+
+    setUploading(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/projects/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.detail || "Upload failed"
+        );
+      }
+
+      setProjectName(result.project);
+
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setUploading(false);
+      event.target.value = "";
+    }
+  };
 
   useEffect(() => {
     fetch(
@@ -70,6 +149,7 @@ function App() {
               label: node.label,
               path: node.path,
               line: node.line,
+              parent: node.parent,
             },
           }));
 
@@ -124,7 +204,7 @@ function App() {
       .catch((error) => {
         console.error("Failed to load project:", error);
       });
-  }, []);
+  }, [projectName]);
 
   return (
     <div className="app">
@@ -134,7 +214,20 @@ function App() {
       />
 
       <main className="main">
-        <Topbar project={projectName} />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".zip"
+          style={{ display: "none" }}
+          onChange={handleFileChange}
+        />
+        <Topbar
+          project={projectName}
+          onUpload={handleUpload}
+          uploading={uploading}
+          onAIInsights={handleAIInsights}
+          aiLoading={aiLoading}
+        />
 
         <div className="workspace">
           <Graph
@@ -150,6 +243,22 @@ function App() {
         </div>
 
         <StatsBar stats={stats} />
+        {aiAnalysis && (
+          <div className="ai-panel">
+            <div className="ai-panel-header">
+              <div>
+                <span className="ai-panel-label">AI ARCHITECT</span>
+                <h2>Codebase Insights</h2>
+              </div>
+
+              <button onClick={() => setAiAnalysis("")}>×</button>
+            </div>
+
+            <div className="ai-panel-content">
+              <pre>{aiAnalysis}</pre>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
