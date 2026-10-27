@@ -1,122 +1,114 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+
+import Sidebar from "./components/Sidebar";
+import Topbar from "./components/Topbar";
+import Graph from "./components/Graph";
+import NodeDetails from "./components/NodeDetails";
+import StatsBar from "./components/StatsBar";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
+  const [selectedNode, setSelectedNode] = useState(null);
+
+  const [stats, setStats] = useState({
+    files: 0,
+    classes: 0,
+    functions: 0,
+    dependencies: 0,
+  });
+
+  const projectName = "codeatlas-sample-repo";
+
+  useEffect(() => {
+    fetch(
+      `http://127.0.0.1:8000/api/projects/${projectName}/analyze`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const fileNodes = data.nodes
+          .filter((node) => node.type === "file")
+          .map((node, index) => ({
+            id: node.id,
+
+            position: {
+              x: (index % 3) * 320,
+              y: Math.floor(index / 3) * 220,
+            },
+
+            data: {
+              label: node.label,
+              path: node.path,
+            },
+
+            style: {
+              background: "#111827",
+              color: "#f9fafb",
+              border: "1px solid #374151",
+              borderRadius: "10px",
+              padding: "14px 18px",
+              width: 180,
+              fontSize: 13,
+            },
+          }));
+
+        const flowEdges = data.edges.map((edge) => ({
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          label: "imports",
+          animated: true,
+        }));
+
+        setNodes(fileNodes);
+        setEdges(flowEdges);
+
+        setStats({
+          files: data.files.length,
+
+          classes: data.nodes.filter(
+            (node) => node.type === "class"
+          ).length,
+
+          functions: data.nodes.filter(
+            (node) => node.type === "function"
+          ).length,
+
+          dependencies: data.edges.length,
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to load project:", error);
+      });
+  }, []);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app">
+      <Sidebar
+        project={projectName}
+        stats={stats}
+      />
 
-      <div className="ticks"></div>
+      <main className="main">
+        <Topbar project={projectName} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <div className="workspace">
+          <Graph
+            nodes={nodes}
+            edges={edges}
+            onNodeClick={setSelectedNode}
+          />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+          <NodeDetails
+            node={selectedNode}
+            onClose={() => setSelectedNode(null)}
+          />
+        </div>
+
+        <StatsBar stats={stats} />
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
