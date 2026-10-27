@@ -13,4 +13,4 @@ CodeAtlas helps developers understand complex and unfamiliar software by visuali
 
 > 🚧 CodeAtlas is currently under development.
 
-> Team ZigZag
+  Team ZigZag
