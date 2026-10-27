@@ -12,3 +12,5 @@ CodeAtlas helps developers understand complex and unfamiliar software by visuali
 * **Visualization:** React Flow
 
 > 🚧 CodeAtlas is currently under development.
+
+  Team ZigZag
